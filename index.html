@@ -297,126 +297,42 @@ h3 {
 }
 
 .board-entry {
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
     background: #fafafa;
 }
 
 .board-entry-name {
     font-weight: bold;
-    font-size: 19px;
+    font-size: 17px;
 }
 
 .board-entry-month {
     color: #555;
-    font-size: 14px;
-    margin: 4px 0 15px;
+    font-size: 13px;
+    margin: 3px 0 8px;
 }
 
-.board-summary {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 12px;
-}
-
-.board-summary strong {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.board-calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 3px;
-    margin-top: 8px;
-}
-
-.board-day {
-    min-height: 38px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 3px;
-    text-align: center;
-    font-size: 11px;
-    background: #fff;
-}
-
-.board-day.header {
-    min-height: auto;
-    font-weight: bold;
-    background: #eee;
-}
-
-.board-day.devotion {
-    background: #4CAF50;
-    color: white;
-}
-
-.board-attendance-section {
-    margin-top: 12px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-}
-
-.board-attendance-title {
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-.board-week-grid {
+.board-stats {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
 }
 
-.board-week {
+.stat {
+    background: white;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    padding: 7px 9px;
+    padding: 5px 8px;
     font-size: 12px;
-    border: 1px solid #ccc;
-}
-
-.board-week.P {
-    background: #4CAF50;
-    color: white;
-}
-
-.board-week.A {
-    background: #f44336;
-    color: white;
-}
-
-.board-week.NM {
-    background: #888;
-    color: white;
-}
-
-.board-count {
-    display: inline-block;
-    margin-left: 4px;
-    padding: 3px 6px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: #f5f5f5;
-    font-size: 11px;
 }
 
 .empty-board {
     text-align: center;
     color: #777;
     padding: 25px 10px;
-}
-
-.loading {
-    text-align: center;
-    padding: 20px;
-    color: #666;
 }
 
 footer {
@@ -450,15 +366,6 @@ footer {
         padding: 8px 9px;
         font-size: 12px;
     }
-
-    .board-calendar {
-        gap: 2px;
-    }
-
-    .board-day {
-        min-height: 34px;
-        font-size: 10px;
-    }
 }
 </style>
 </head>
@@ -469,14 +376,20 @@ footer {
 
     <div class="header-logo">
 
+        <!--
+        OPTIONAL LOGO:
+
+        Put your logo in:
+        app/src/main/assets/logo.png
+
+        Then uncomment the img below.
+        -->
+
         <img
             id="logoImage"
             src="logo.png"
             alt="CYM Logo"
-            onerror="
-                this.style.display='none';
-                document.getElementById('logoPlaceholder').style.display='block';
-            "
+            onerror="this.style.display='none';document.getElementById('logoPlaceholder').style.display='block';"
         >
 
         <div
@@ -519,9 +432,9 @@ footer {
     </div>
 
 
-    <!-- ================================================= -->
+    <!-- ========================= -->
     <!-- TRACKER -->
-    <!-- ================================================= -->
+    <!-- ========================= -->
 
     <div id="trackerView">
 
@@ -549,7 +462,9 @@ footer {
             ></div>
 
 
-            <h2 id="month-title"></h2>
+            <h2 id="month-title">
+                January
+            </h2>
 
 
             <h3>
@@ -567,6 +482,7 @@ footer {
 
             <div
                 id="attendance-forms"
+                class="attendance-section"
             ></div>
 
 
@@ -591,9 +507,9 @@ footer {
     </div>
 
 
-    <!-- ================================================= -->
+    <!-- ========================= -->
     <!-- TRANSPARENCY BOARD -->
-    <!-- ================================================= -->
+    <!-- ========================= -->
 
     <div
         id="transparencyView"
@@ -605,7 +521,7 @@ footer {
         </h2>
 
         <p>
-            All submitted CYM leader trackers are shown here.
+            Submitted tracker records visible to all users.
         </p>
 
         <button
@@ -638,7 +554,7 @@ footer {
 
 /*
 ==========================================================
- FIREBASE IMPORTS
+ FIREBASE
 ==========================================================
 */
 
@@ -650,20 +566,16 @@ import {
     getFirestore,
     collection,
     addDoc,
-    getDocs
+    getDocs,
+    query,
+    orderBy
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-
-/*
-==========================================================
- FIREBASE CONFIG
-==========================================================
-*/
 
 const firebaseConfig = {
 
     apiKey:
-        "AIzaSyCsQrzsGHZ7o7VY9EKIwSTnrBIi1x7fR_I",
+        "AIzaSyCsQrzsGHZ7o7V9YEKIwSTnrBIi1x7fR_I",
 
     authDomain:
         "cym-leaders-web-type-handouts.firebaseapp.com",
@@ -689,9 +601,7 @@ let db = null;
 
 
 /*
-==========================================================
- FIREBASE INITIALIZATION
-==========================================================
+Firebase failure MUST NOT stop the form.
 */
 
 try {
@@ -702,11 +612,9 @@ try {
     db =
         getFirestore(firebaseApp);
 
-    console.log("Firebase initialized");
-
 } catch (error) {
 
-    console.error(
+    console.log(
         "Firebase initialization failed:",
         error
     );
@@ -721,7 +629,6 @@ try {
 */
 
 const months = [
-
     "January",
     "February",
     "March",
@@ -734,24 +641,29 @@ const months = [
     "October",
     "November",
     "December"
-
 ];
 
 
 const sections = [
 
     "W12 DISCIPLESHIP",
+
     "CELL GROUP",
+
     "W12 MEETING",
+
     "SUNDAY SERVICES",
+
     "CYM NIGHT",
+
     "THURSDAY NIGHT TRAINING",
+
     "PRAYER MEETING"
 
 ];
 
 
-let currentMonth = new Date().getMonth();
+let currentMonth = 0;
 
 const year =
     new Date().getFullYear();
@@ -812,9 +724,7 @@ function renderMonthButtons() {
                 month;
 
 
-            if (
-                index === currentMonth
-            ) {
+            if (index === currentMonth) {
 
                 button.classList.add(
                     "active"
@@ -889,7 +799,6 @@ function renderCalendar() {
 
 
     const days = [
-
         "Sun",
         "Mon",
         "Tue",
@@ -897,7 +806,6 @@ function renderCalendar() {
         "Thu",
         "Fri",
         "Sat"
-
     ];
 
 
@@ -938,9 +846,7 @@ function renderCalendar() {
     ) {
 
         calendar.appendChild(
-            document.createElement(
-                "div"
-            )
+            document.createElement("div")
         );
 
     }
@@ -1037,9 +943,7 @@ function updateDevotion() {
         .forEach(
             checkbox => {
 
-                if (
-                    checkbox.checked
-                ) {
+                if (checkbox.checked) {
 
                     count++;
 
@@ -1226,3 +1130,81 @@ function renderAttendance() {
                         );
 
 
+                        button.classList.add(
+                            next
+                        );
+
+
+                        button.dataset.state =
+                            next;
+
+
+                        localStorage.setItem(
+                            key,
+                            next
+                        );
+
+                    };
+
+
+                wrapper.appendChild(
+                    button
+                );
+
+
+                /*
+                Count field for W12 and CELL GROUP
+                */
+
+                if (
+                    section ===
+                        "W12 DISCIPLESHIP" ||
+
+                    section ===
+                        "CELL GROUP"
+                ) {
+
+                    const input =
+                        document.createElement(
+                            "input"
+                        );
+
+
+                    input.type =
+                        "number";
+
+
+                    input.min = 0;
+
+                    input.max = 99;
+
+
+                    input.placeholder =
+                        "0";
+
+
+                    input.className =
+                        "attendance-input";
+
+
+                    const countKey =
+                        storageKey(
+                            "attcount",
+                            year,
+                            currentMonth,
+                            section,
+                            week
+                        );
+
+
+                    input.value =
+                        localStorage.getItem(
+                            countKey
+                        ) || "";
+
+
+                    input.oninput =
+                        function () {
+
+                            localStorage.setItem(
+         
