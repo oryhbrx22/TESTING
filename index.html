@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CYM Leaders' Tracker</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f4f6;
+    color: #222;
+}
+
+header {
+    background: #222;
+    color: #fff;
+    padding: 18px 15px;
+    text-align: center;
+}
+
+.header-logo {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: #fff;
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 3px solid #4CAF50;
+}
+
+.header-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+header h1 {
+    margin: 5px 0;
+    font-size: 24px;
+}
+
+#user-info {
+    font-size: 14px;
+    opacity: .85;
+    margin-top: 5px;
+}
+
+.container {
+    width: 100%;
+    max-width: 950px;
+    margin: auto;
+    padding: 15px;
+}
+
+.top-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.top-buttons button {
+    flex: 1;
+    min-width: 140px;
+}
+
+button {
+    border: none;
+    border-radius: 6px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.primary {
+    background: #4CAF50;
+    color: #fff;
+}
+
+.board-button {
+    background: #1976D2;
+    color: #fff;
+}
+
+.form-section,
+.board-section {
+    background: #fff;
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 7px rgba(0,0,0,.08);
+}
+
+.username-section {
+    margin-bottom: 15px;
+}
+
+.username-section label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+#username {
+    width: 100%;
+    max-width: 500px;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.month-selector {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 7px;
+    margin-bottom: 15px;
+}
+
+.month-selector button {
+    background: #ddd;
+    color: #222;
+}
+
+.month-selector button.active {
+    background: #4CAF50;
+    color: #fff;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7,1fr);
+    gap: 4px;
+    margin-bottom: 20px;
+}
+
+.calendar div {
+    min-height: 48px;
+    border: 1px solid #ddd;
+    padding: 5px;
+    text-align: center;
+    border-radius: 4px;
+    background: #fafafa;
+}
+
+.calendar .day-header {
+    min-height: auto;
+    background: #eee;
+    font-weight: bold;
+}
+
+.calendar input {
+    width: 18px;
+    height: 18px;
+    margin-top: 5px;
+}
+
+.attendance-title {
+    margin-top: 22px;
+    padding-top: 12px;
+    border-top: 1px solid #ddd;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.legend {
+    margin: 8px 0 15px;
+    font-size: 13px;
+}
+
+.legend span {
+    display: inline-block;
+    margin-right: 12px;
+}
+
+.legend-present {
+    color: #4CAF50;
+}
+
+.legend-absent {
+    color: #f44336;
+}
+
+.legend-nm {
+    color: #777;
+}
+
+.attendance-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.week-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.attendance-grid button {
+    border: 1px solid #ccc;
+    background: #eee;
+    color: #222;
+}
+
+.attendance-grid button.P {
+    background: #4CAF50;
+    color: #fff;
+}
+
+.attendance-grid button.A {
+    background: #f44336;
+    color: #fff;
+}
+
+.attendance-grid button.NM {
+    background: #888;
+    color: #fff;
+}
+
+.attendance-input {
+    width: 48px;
+    padding: 7px 3px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.submit-area {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.submit-area button {
+    width: 100%;
+    max-width: 400px;
+    padding: 13px;
+    font-size: 16px;
+}
+
+.status {
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+    display: none;
+}
+
+.status.success {
+    display: block;
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status.error {
+    display: block;
+    background: #ffebee;
+    color: #c62828;
+}
+
+.board-section {
+    display: none;
+}
+
+.board-section.visible {
+    display: block;
+}
+
+.board-entry {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: #fafafa;
+}
+
+.board-entry-name {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.board-entry-month {
+    color: #555;
+    font-size: 13px;
+    margin: 3px 0 10px;
+}
+
+.board-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.stat {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+
+.board-detail {
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.board-detail h4 {
+    margin: 8px 0 5px;
+}
+
+.board-weeks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.board-week {
+    font-size: 12px;
+    padding: 5px 7px;
+    border-radius: 4px;
+    color: #fff;
+}
+
+.board-week.P {
+    background: #4CAF50;
+}
+
+.board-week.A {
+    background: #f44336;
+}
+
+.board-week.NM {
+    background: #888;
+}
+
+.empty-board {
+    text-align: center;
+    color: #777;
+    padding: 25px 10px;
+}
+
+.loading {
+    text-align: center;
+    color: #777;
+    padding: 20px;
+}
+
+footer {
+    text-align: center;
+    color: #777;
+    font-size: 12px;
+    padding: 20px;
+}
+
+@media(max-width:600px) {
+    .container {
+        padding: 10px;
+    }
+
+    .month-selector {
+        grid-template-columns: repeat(3,1fr);
+    }
+
+    .calendar div {
+        min-height: 43px;
+        font-size: 12px;
+    }
+
+    .calendar input {
+        width: 16px;
+        height: 16px;
+    }
+
+    .attendance-grid button {
+        padding: 8px 9px;
+        font-size: 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="header-logo">
+        <img
+            id="logoImage"
+            src="logo.png"
+            alt="CYM Logo"
+            onerror="this.style.display='none';document.getElementById('logoPlaceholder').style.display='block';"
+        >
+
+        <div
+            id="logoPlaceholder"
+            style="color:#4CAF50;font-size:22px;font-weight:bold;"
+        >
+            CYM
+        </div>
+    </div>
+
+    <h1>CYM Leaders' Tracker</h1>
+
+    <div id="user-info">
+        Leader Tracker
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div class="top-buttons">
+
+        <button
+            class="primary"
+            onclick="showTracker()"
+        >
+            📋 Tracker
+        </button>
+
+        <button
+            class="board-button"
+            onclick="showTransparencyBoard()"
+        >
+            📊 Transparency Board
+        </button>
+
+    </div>
+
+
+    <div id="trackerView">
+
+        <div class="form-section">
+
+            <div class="username-section">
+
+                <label for="username">
+                    Full Name
+                </label>
+
+                <input
+                    id="username"
+                    type="text"
+                    placeholder="Enter your full name"
+                    autocomplete="name"
+                >
+
+            </div>
+
+
+            <div
+                id="month-selector"
+                class="month-selector"
+            ></div>
+
+
+            <h2 id="month-title">
+                January
+            </h2>
+
+
+            <h3>
+                DEVOTION:
+                <span id="devotion-count">0</span>
+                days
+            </h3>
+
+
+            <div
+                id="calendar"
+                class="calendar"
+            ></div>
+
+
+            <div
+                id="attendance-forms"
+                class="attendance-section"
+            ></div>
+
+
+            <div class="submit-area">
+
+                <button
+                    class="primary"
+                    onclick="submitTracker()"
+                >
+                    SUBMIT TRACKER
+                </button>
+
+                <div
+                    id="status"
+                    class="status"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="transparencyView"
+        class="board-section"
+    >
+
+        <h2>
+            📊 Transparency Board
+        </h2>
+
+        <p>
+            Submitted tracker records visible to all users.
+        </p>
+
+
+        <button
+            class="primary"
+            onclick="loadTransparencyBoard()"
+        >
+            🔄 Refresh Board
+        </button>
+
+
+        <div
+            id="boardEntries"
+            style="margin-top:15px;"
+        >
+
+            <div class="empty-board">
+                No records loaded yet.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<footer>
+    CYM Leaders' Tracker
+</footer>
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    query,
+    orderBy,
+    limit
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyCsQrzsGHZ7o7V9YEKIwSTnrBIi1x7fR_I",
+
+    authDomain:
+        "cym-leaders-web-type-handouts.firebaseapp.com",
+
+    projectId:
+        "cym-leaders-web-type-handouts",
+
+    storageBucket:
+        "cym-leaders-web-type-handouts.firebasestorage.app",
+
+    messagingSenderId:
+        "936994717986",
+
+    appId:
+        "1:936994717986:web:a36140d381a832b940e57b",
+
+    measurementId:
+        "G-QNLQC649FX"
+};
+
+
+let db = null;
+
+try {
+
+    db = getFirestore(
+        initializeApp(firebaseConfig)
+    );
+
+} catch (e) {
+
+    console.error(e);
+
+}
+
+
+const months = [
+
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+
+];
+
+
+const sections = [
+
+    "W12 DISCIPLESHIP",
+    "CELL GROUP",
+    "W12 MEETING",
+    "SUNDAY SERVICES",
+    "CYM NIGHT",
+    "THURSDAY NIGHT TRAINING",
+    "PRAYER MEETING"
+
+];
+
+
+let currentMonth = 0;
+
+const year = new Date().getFullYear();
+
+
+function dim(m, y) {
+
+    return new Date(
+        y,
+        m + 1,
+        0
+    ).getDate();
+
+}
+
+
+function key(p, ...x) {
+
+    return [
+        p,
+        ...x
+    ].join("_");
+
+}
+
+
+function renderMonthButtons() {
+
+    const c =
+        document.getElementById(
+            "month-selector"
+        );
+
+    c.innerHTML = "";
+
+
+    months.forEach((m, i) => {
+
+        const b =
+            document.createElement("button");
+
+        b.textContent = m;
+
+
+        if (i === currentMonth) {
+
+            b.classList.add("active");
+
+        }
+
+
+        b.onclick = () => {
+
+            currentMonth = i;
+
+
+            document
+                .querySelectorAll(
+                    ".month-selector button"
+                )
+                .forEach(x =>
+                    x.classList.remove("active")
+                );
+
+
+            b.classList.add("active");
+
+
+            renderCalendar();
+            renderAttendance();
+
+        };
+
+
+        c.appendChild(b);
+
+    });
+
+}
+
+
+function renderCalendar() {
+
+    const c =
+        document.getElementById(
+            "calendar"
+        );
+
+
+    c.innerHTML = "";
+
+
+    document.getElementById(
+        "month-title"
+    ).textContent =
+        months[currentMonth] +
+        " " +
+        year;
+
+
+    [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+    ].forEach(d => {
+
+        const x =
+            document.createElement("div");
+
+        x.className =
+            "day-header";
+
+        x.textContent = d;
+
+        c.appendChild(x);
+
+    });
+
+
+    for (
+        let i = 0;
+        i < new Date(
+            year,
+            currentMonth,
+            1
+        ).getDay();
+        i++
+    ) {
+
+        c.appendChild(
+            document.createElement("div")
+        );
+
+    }
+
+
+    for (
+        let d = 1;
+        d <= dim(currentMonth, year);
+        d++
+    ) {
+
+        const cell =
+            document.createElement("div");
+
+        const cb =
+            document.createElement("input");
+
+
+        cb.type = "checkbox";
+
+
+        cb.checked =
+            localStorage.getItem(
+                key(
+                    "dev",
+                    year,
+                    currentMonth,
+                    d
+                )
+            ) === "1";
+
+
+        cb.onchange = () => {
+
+            localStorage.setItem(
+                key(
+                    "dev",
+                    year,
+                    currentMonth,
+                    d
+                ),
+                cb.checked ? "1" : "0"
+            );
+
+
+            updateDevotion();
+
+        };
+
+
+        cell.innerHTML =
+            d + "<br>";
+
+
+        cell.appendChild(cb);
+
+        c.appendChild(cell);
+
+    }
+
+
+    updateDevotion();
+
+}
+
+
+function updateDevotion() {
+
+    let n = 0;
+
+
+    document
+        .querySelectorAll(
+            "#calendar input"
+        )
+        .forEach(x => {
+
+            if (x.checked) {
+
+                n++;
+
+            }
+
+        });
+
+
+    document.getElementById(
+        "devotion-count"
+    ).textContent = n;
+
+}
+
+
+function renderAttendance() {
+
+    const c =
+        document.getElementById(
+            "attendance-forms"
+        );
+
+
+    c.innerHTML = "";
+
+
+    const t =
+        document.createElement("div");
+
+    t.className =
+        "attendance-title";
+
+    t.textContent =
+        "FULL MONTH ATTENDANCE";
+
+    c.appendChild(t);
+
+
+    const l =
+        document.createElement("div");
+
+    l.className =
+        "legend";
+
+
+    l.innerHTML =
+        '<span class="legend-present">● Present</span>' +
+        '<span class="legend-absent">● Absent</span>' +
+        '<span class="legend-nm">● No Meeting</span>';
+
+
+    c.appendChild(l);
+
+
+    sections.forEach(s => {
+
+        const lab =
+            document.createElement("div");
+
+        lab.className =
+            "attendance-title";
+
+        lab.textContent = s;
+
+        c.appendChild(lab);
+
+
+        const g =
+            document.createElement("div");
+
+        g.className =
+            "attendance-grid";
+
+
+        for (
+            let w = 1;
+            w <= 5;
+            w++
+        ) {
+
+            const wrap =
+                document.createElement("div");
+
+            wrap.className =
+                "week-wrapper";
+
+
+            const b =
+                document.createElement("button");
+
+            b.textContent =
+                "Week " + w;
+
+
+            const k =
+                key(
+                    "att",
+                    year,
+                    currentMonth,
+                    s,
+                    w
+                );
+
+
+            const saved =
+                localStorage.getItem(k) ||
+                "NM";
+
+
+            b.dataset.state =
+                saved;
+
+
+            b.classList.add(saved);
+
+
+            b.onclick = () => {
+
+                const next =
+                    b.dataset.state === "NM"
+                        ? "P"
+                        : b.dataset.state === "P"
+                            ? "A"
+                            : "NM";
+
+
+                b.classList.remove(
+                    "P",
+                    "A",
+                    "NM"
+                );
+
+
+                b.classList.add(next);
+
+
+                b.dataset.state =
+                    next;
+
+
+                localStorage.setItem(
+                    k,
+                    next
+                );
+
+            };
+
+
+            wrap.appendChild(b);
+
+
+            if (
+                s === "W12 DISCIPLESHIP" ||
+                s === "CELL GROUP"
+            ) {
+
+                const inp =
+                    document.createElement(
+                        "input"
+                    );
+
+
+                inp.type = "number";
+
+                inp.min = 0;
+
+                inp.max = 99;
+
+                inp.placeholder = "0";
+
+                inp.className =
+                    "attendance-input";
+
+
+                const ck =
+                    key(
+                        "attcount",
+                        year,
+                        currentMonth,
+                        s,
+                        w
+                    );
+
+
+                inp.value =
+                    localStorage.getItem(ck) ||
+                    "";
+
+
+                inp.oninput = () => {
+
+                    localStorage.setItem(
+                        ck,
+                        inp.value
+                    );
+
+                };
+
+
+                wrap.appendChild(inp);
+
+            }
+
+
+            g.appendChild(wrap);
+
+        }
+
+
+        c.appendChild(g);
+
+    });
+
+}
+
+
+function collect() {
+
+    const name =
+        document
+            .getElementById("username")
+            .value
+            .trim();
+
+
+    if (!name) {
+
+        throw Error(
+            "Please enter your full name."
+        );
+
+    }
+
+
+    const devotion = [];
+
+
+    for (
+        let d = 1;
+        d <= dim(currentMonth, year);
+        d++
+    ) {
+
+        if (
+            localStorage.getItem(
+                key(
+                    "dev",
+                    year,
+                    currentMonth,
+                    d
+                )
+            ) === "1"
+        ) {
+
+            devotion.push(d);
+
+        }
+
+    }
+
+
+    const attendance = {};
+
+
+    sections.forEach(s => {
+
+        attendance[s] = {};
+
+
+        for (
+            let w = 1;
+            w <= 5;
+            w++
+        ) {
+
+            attendance[s]["week" + w] =
+                localStorage.getItem(
+                    key(
+                        "att",
+                        year,
+                        currentMonth,
+                        s,
+                        w
+                    )
+                ) || "NM";
+
+
+            if (
+                s === "W12 DISCIPLESHIP" ||
+                s === "CELL GROUP"
+            ) {
+
+                attendance[s][
+                    "week" + w + "_count"
+                ] =
+                    localStorage.getItem(
+                        key(
+                            "attcount",
+                            year,
+                            currentMonth,
+                            s,
+                            w
+                        )
+                    ) || "";
+
+            }
+
+        }
+
+    });
+
+
+    return {
+
+        name,
+
+        month:
+            months[currentMonth],
+
+        monthIndex:
+            currentMonth,
+
+        year,
+
+        devotion,
+
+        attendance,
+
+        submittedAt:
+            Date.now()
+
+    };
+
+}
+
+
+async function submitTracker() {
+
+    const st =
+        document.getElementById(
+            "status"
+        );
+
+
+    st.className = "status";
+
+
+    try {
+
+        if (!db) {
+
+            throw Error(
+                "Firebase is not connected."
+            );
+
+        }
+
+
+        const data = collect();
+
+
+        st.style.display =
+            "block";
+
+        st.textContent =
+            "Submitting...";
+
+
+        await addDoc(
+            collection(
+                db,
+                "trackerSubmissions"
+            ),
+            data
+        );
+
+
+        st.className =
+            "status success";
+
+
+        st.textContent =
+            "Tracker submitted successfully.";
+
+
+    } catch (e) {
+
+        console.error(e);
+
+
+        st.className =
+            "status error";
+
+
+        st.textContent =
+            "Could not submit: " +
+            e.message;
+
+    }
+
+}
+
+
+window.showTracker = () => {
+
+    document.getElementById(
+        "trackerView"
+    ).style.display = "block";
+
+
+    document
+        .getElementById(
+            "transparencyView"
+        )
+        .classList.remove(
+            "visible"
+        );
+
+};
+
+
+window.showTransparencyBoard = () => {
+
+    document.getElementById(
+        "trackerView"
+    ).style.display = "none";
+
+
+    document
+        .getElementById(
+            "transparencyView"
+        )
+        .classList.add(
+            "visible"
+        );
+
+
+    loadTransparencyBoard();
+
+};
+
+
+function safe(x) {
+
+    return String(x ?? "").replace(
+        /[&<>"']/g,
+        c =>
+            ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[c]
+    );
+
+}
+
+
+function renderRecord(d) {
+
+    let h =
+        '<div class="board-entry">' +
+
+        '<div class="board-entry-name">' +
+        safe(d.name) +
+        '</div>' +
+
+        '<div class="board-entry-month">' +
+        safe(d.month) +
+        " " +
+        safe(d.year) +
+        '</div>' +
+
+        '<div class="board-stats">' +
+
+        '<span class="stat">' +
+        "Devotion: " +
+        (d.devotion?.length || 0) +
+        " days" +
+        "</span>" +
+
+        "</div>" +
+
+        '<div class="board-detail">' +
+
+        "<h4>Devotion Dates</h4>" +
+
+        "<div>" +
+
+        (
+            d.devotion?.length
+                ? d.devotion.join(", ")
+                : "None recorded"
+        ) +
+
+        "</div>" +
+
+        "<h4>Attendance</h4>";
+
+
+    for (const s of sections) {
+
+        h +=
+            "<div>" +
+            "<strong>" +
+            safe(s) +
+            "</strong>" +
+            '<div class="board-weeks">';
+
+
+        for (
+            let w = 1;
+            w <= 5;
+            w++
+        ) {
+
+            const state =
+                d.attendance?.[s]?.[
+                    "week" + w
+                ] || "NM";
+
+
+            let count = "";
+
+
+            if (
+                s === "W12 DISCIPLESHIP" ||
+                s === "CELL GROUP"
+            ) {
+
+                const v =
+                    d.attendance?.[s]?.[
+                        "week" +
+                        w +
+                        "_count"
+                    ];
+
+
+                if (v) {
+
+                    count =
+                        " (" +
+                        safe(v) +
+                        ")";
+
+                }
+
+            }
+
+
+            h +=
+                '<span class="board-week ' +
+                state +
+                '">' +
+                "W" +
+                w +
+                ": " +
+                state +
+                count +
+                "</span>";
+
+        }
+
+
+        h +=
+            "</div>" +
+            "</div>";
+
+    }
+
+
+    return h +
+        "</div>" +
+        "</div>";
+
+}
+
+
+async function loadTransparencyBoard() {
+
+    const b =
+        document.getElementById(
+            "boardEntries"
+        );
+
+
+    b.innerHTML =
+        '<div class="loading">' +
+        "Loading records..." +
+        "</div>";
+
+
+    try {
+
+        if (!db) {
+
+            throw Error(
+                "Firebase is not connected."
+            );
+
+        }
+
+
+        const q =
+            query(
+                collection(
+                    db,
+                    "trackerSubmissions"
+                ),
+                orderBy(
+                    "submittedAt",
+                    "desc"
+                ),
+                limit(100)
+            );
+
+
+        const s =
+            await getDocs(q);
+
+
+        if (s.empty) {
+
+            b.innerHTML =
+                '<div class="empty-board">' +
+                "No submitted records yet." +
+                "</div>";
+
+            return;
+
+        }
+
+
+        b.innerHTML = "";
+
+
+        s.forEach(x => {
+
+            b.insertAdjacentHTML(
+                "beforeend",
+                renderRecord(
+                    x.data()
+                )
+            );
+
+        });
+
+
+    } catch (e) {
+
+        b.innerHTML =
+            '<div class="status error" style="display:block">' +
+            "Could not load board: " +
+            safe(e.message) +
+            "</div>";
+
+    }
+
+}
+
+
+document.getElementById(
+    "username"
+).oninput = e => {
+
+    localStorage.setItem(
+        "user",
+        e.target.value
+    );
+
+
+    document.getElementById(
+        "user-info"
+    ).textContent =
+        "Leader: " +
+        e.target.value;
+
+};
+
+
+window.onload = () => {
+
+    const u =
+        localStorage.getItem(
+            "user"
+        );
+
+
+    if (u) {
+
+        document.getElementById(
+            "username"
+        ).value = u;
+
+
+        document.getElementById(
+            "user-info"
+        ).textContent =
+            "Leader: " +
+            u;
+
+    }
+
+};
+
+
+renderMonthButtons();
+
+renderCalendar();
+
+renderAttendance();
+
+</script>
+
+</body>
+</html>
